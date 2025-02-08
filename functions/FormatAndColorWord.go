@@ -21,7 +21,7 @@ func FormatAndColorWord(lineIndex int, targetWord string, fileName string, color
 			if count != 0 {
 				colorEscape := GetColorCode(colorCode)
 				if colorEscape != "" {
-					currentLine = colorEscape + currentLine + GetColorCode("clearFormat")
+					currentLine = colorEscape + currentLine + GetColorCode("reset")
 				} else {
 					fmt.Println(Errors("availableColor"))
 					os.Exit(0)
@@ -31,7 +31,7 @@ func FormatAndColorWord(lineIndex int, targetWord string, fileName string, color
 		} else if highlightLetters == "   " {
 			colorEscape := GetColorCode(colorCode)
 			if colorEscape != "" {
-				currentLine = colorEscape + currentLine + GetColorCode("clearFormat")
+				currentLine = colorEscape + currentLine + GetColorCode("reset")
 			} else {
 				fmt.Println(Errors("availableColor"))
 				os.Exit(0)

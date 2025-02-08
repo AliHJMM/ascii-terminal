@@ -10,7 +10,7 @@ import (
 func main() {
 	if len(os.Args) < 2 || len(os.Args) > 8 {
 		fmt.Println(functions.Errors("Usage"))
-		fmt.Println(functions.Errors("AvColor"))
+		fmt.Println(functions.Errors("availableColor"))
 		return
 	}
 	inputargs := os.Args[1:]
@@ -46,7 +46,7 @@ func main() {
 		if strings.HasPrefix(inputargs[0], "--color") {
 			color = strings.TrimPrefix(inputargs[0], "--color=")
 			if functions.GetColorCode(color) == "" {
-				fmt.Println(functions.Errors("AvColor"))
+				fmt.Println(functions.Errors("availableColor"))
 				os.Exit(0)
 			}
 			if lastindex == 4 {
@@ -67,7 +67,7 @@ func main() {
 				str = inputargs[1]
 			} else {
 				fmt.Println(functions.Errors("Usage"))
-				fmt.Println(functions.Errors("AvColor"))
+				fmt.Println(functions.Errors("availableColor"))
 				os.Exit(0)
 			}
 		} else if lastindex == 2 {
@@ -75,7 +75,7 @@ func main() {
 			filename = functions.GetBannerFile(inputargs[1])
 		} else if len(inputargs) != 1 {
 			fmt.Println(functions.Errors("Usage"))
-			fmt.Println(functions.Errors("AvColor"))
+			fmt.Println(functions.Errors("availableColor"))
 			os.Exit(0)
 		}
 
@@ -113,7 +113,7 @@ func main() {
 		}
 	} else {
 		fmt.Println(functions.Errors("Usage"))
-		fmt.Println(functions.Errors("AvColor"))
+		fmt.Println(functions.Errors("availableColor"))
 		return
 	}
 	if output != "" {
