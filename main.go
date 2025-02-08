@@ -43,6 +43,12 @@ func main() {
 	if len(inputargs) >= 1 {
 		str := inputargs[0]
 
+		// **Check for valid ASCII characters**
+		if !functions.CharValidation(str) {
+			fmt.Println("Error: Input contains invalid characters. Only ASCII characters (32-126) are allowed.")
+			os.Exit(1)
+		}
+
 		if strings.HasPrefix(inputargs[0], "--color") {
 			color = strings.TrimPrefix(inputargs[0], "--color=")
 			if functions.GetColorCode(color) == "" {
