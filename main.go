@@ -14,7 +14,7 @@ func main() {
 		return
 	}
 	inputargs := os.Args[1:]
-	filename := "standard.txt"
+	filename := "Banners/standard.txt"
 	coloredLetters := ""
 	color := ""
 	output := ""

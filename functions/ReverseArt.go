@@ -36,7 +36,7 @@ func ReverseArt() {
 		asciiArt := strings.Split(artData, "\n")
 
 		// Detect banner file
-		BannerFileName := "standard.txt"
+		BannerFileName := "Banners/standard.txt"
 		fContent, err := os.ReadFile(BannerFileName)
 		if err != nil {
 			fmt.Println(Errors("fileContentError"))

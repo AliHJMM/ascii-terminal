@@ -6,15 +6,15 @@ import (
 
 func GetBannerFile(bannerName string) string {
 	bannerFiles := map[string]string{
-		"shadow":    "shadow.txt",
-		"standard":  "standard.txt",
-		"thinkertoy": "thinkertoy.txt",
+		"shadow":    "Banners/shadow.txt",
+		"standard":  "Banners/standard.txt",
+		"thinkertoy": "Banners/thinkertoy.txt",
 	}
 
 	bannerName = strings.ToLower(bannerName)
 
 	if strings.HasSuffix(bannerName, ".txt") {
-		bannerName = strings.TrimRight(bannerName, ".txt")
+		bannerName = strings.TrimSuffix(bannerName, ".txt") // Fix trimming issue
 	}
 
 	if bannerFile, exists := bannerFiles[bannerName]; exists {
