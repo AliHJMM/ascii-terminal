@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+// 1) Create a global or file-level string to accumulate reversed characters
+var ReversedResult string
+
 func ReverseArt() {
 	if len(os.Args) != 2 || len(os.Args[1]) < 9 || os.Args[1][0:10] != "--reverse=" {
 		fmt.Println(Errors("reverseUsage"))
@@ -22,8 +25,10 @@ func ReverseArt() {
 		os.Exit(0)
 	}
 	if ProcessFile(file) {
-		fmt.Println("Art file:", artFile)
+		// Reset or empty any previous accumulation.
+		ReversedResult = ""
 
+		fmt.Println("Art file:", artFile)
 		artContent, err := os.ReadFile(artFile)
 		if err != nil {
 			fmt.Println(Errors("textFileError"))
@@ -33,13 +38,13 @@ func ReverseArt() {
 		artDataTest := strings.TrimSpace(artData)
 		asciiArt := strings.Split(artData, "\n")
 
+		// Detect which banner file to use
 		BannerFileName := "standard.txt"
 		for _, symbol := range artDataTest {
-			if strings.Contains(string(symbol), "o") {
+			if strings.ContainsRune("o", symbol) {
 				BannerFileName = "thinkertoy.txt"
 				break
-			} else if string(symbol) == "V" || string(symbol) == ")" || string(symbol) == "(" || string(symbol) == "/" ||
-				string(symbol) == "\\" || string(symbol) == "<" || string(symbol) == ">" || string(symbol) == "'" {
+			} else if strings.ContainsRune("V)(/\\<>'", symbol) {
 				BannerFileName = "standard.txt"
 				break
 			} else {
@@ -55,8 +60,8 @@ func ReverseArt() {
 		}
 		fontData := string(fContent)
 		BannerLines := strings.Split(fontData, "\n")
-		c := 0
 
+		c := 0
 		if len(asciiArt) > 9 {
 			for i := 0; i < len(asciiArt)-1; {
 				if len(asciiArt[i]) > 0 {
@@ -66,17 +71,23 @@ func ReverseArt() {
 						os.Exit(0)
 					}
 					reverseArt(BannerLines, asciiArt[i:c], 0, 0, 1)
-					fmt.Println()
+					// Move forward 8 lines (one ASCII "character" block)
 					i = i + 8
 				} else {
-					fmt.Println()
-					i = i + 1
+					// Could treat a blank ASCII line as a word boundary or newline
+					// For instance, if you want a space or a new line:
+					// ReversedResult += " "
+					i++
 				}
 			}
 		} else {
 			reverseArt(BannerLines, asciiArt, 0, 0, 1)
 		}
+
+		// 4) Print the entire reversed result at once
 		fmt.Println("Reverse process complete.")
+		fmt.Println("Reconstructed text (all at once):")
+		fmt.Println(ReversedResult)
 	}
 
 	os.Exit(0)
@@ -85,58 +96,62 @@ func ReverseArt() {
 var idx = 0
 
 func reverseArt(BannerLines []string, asciiArt []string, SymbolFound int, ArtLine int, BannerLine int) {
-	if SymbolFound != len(asciiArt[ArtLine]) {
+	if SymbolFound == len(asciiArt[ArtLine]) {
+		return
+	}
 
-		bannerWidth := len(BannerLines[BannerLine])
+	bannerWidth := len(BannerLines[BannerLine])
 
-		if SymbolFound+bannerWidth <= len(asciiArt[ArtLine]) {
-			if ArtLine < 7 {
-				if BannerLines[BannerLine+ArtLine] == asciiArt[ArtLine][SymbolFound:SymbolFound+bannerWidth] { 
-					reverseArt(BannerLines, asciiArt, SymbolFound, ArtLine+1, BannerLine) 
-				} else {
-					idx = BannerLine + 9
-					if len(BannerLines)-1-idx < 9 && len(BannerLines)-1-idx != 0 {
-						fmt.Println("Reverse process complete.")
-						os.Exit(0)
-					}
-					reverseArt(BannerLines, asciiArt, SymbolFound, 0, idx) 
+	if SymbolFound+bannerWidth <= len(asciiArt[ArtLine]) {
+		if ArtLine < 7 {
+			// still scanning the 8 lines of a single character
+			if BannerLines[BannerLine+ArtLine] == asciiArt[ArtLine][SymbolFound:SymbolFound+bannerWidth] {
+				// match found for one line of the character, keep going
+				reverseArt(BannerLines, asciiArt, SymbolFound, ArtLine+1, BannerLine)
+			} else {
+				// jump to next 9 lines in banner
+				idx = BannerLine + 9
+				if len(BannerLines)-1-idx < 9 && len(BannerLines)-1-idx != 0 {
+					fmt.Println("Reverse process complete.")
+					os.Exit(0)
 				}
-			} else { 
-				r := ((BannerLine - 1) / 9) + 32 
-				fmt.Printf("Character: %c\n", r)
-				reverseArt(BannerLines, asciiArt, SymbolFound+bannerWidth, 0, 1) 
+				reverseArt(BannerLines, asciiArt, SymbolFound, 0, idx)
 			}
 		} else {
-			idx = BannerLine + 9
-			if len(BannerLines)-1-idx < 9 && len(BannerLines)-1-idx != 0 {
-				fmt.Println("Error: Invalid ascii art or unsupported banner format.")
-				os.Exit(0)
-			}
-			reverseArt(BannerLines, asciiArt, SymbolFound, 0, idx) 
-		}
+			// 2) Instead of printing "Character: X", accumulate it in ReversedResult
+			r := ((BannerLine - 1) / 9) + 32
+			ReversedResult += string(r)
 
+			// Move SymbolFound to the next chunk
+			reverseArt(BannerLines, asciiArt, SymbolFound+bannerWidth, 0, 1)
+		}
+	} else {
+		idx = BannerLine + 9
+		if len(BannerLines)-1-idx < 9 && len(BannerLines)-1-idx != 0 {
+			fmt.Println("Error: Invalid ascii art or unsupported banner format.")
+			os.Exit(0)
+		}
+		reverseArt(BannerLines, asciiArt, SymbolFound, 0, idx)
 	}
 }
 
 func ProcessFile(file io.Reader) bool {
 	scanner := bufio.NewScanner(file)
-	lineCount, wordNum, letterWidth := 0, 0, 0
+	lineCount, letterWidth := 0, 0
 	counter := 0
+
 	for scanner.Scan() {
 		counter++
 		line := scanner.Text()
 		if lineCount == 0 {
 			letterWidth = len(line)
 		}
-
 		if line == "" && lineCount == 0 {
 			continue
 		} else if line == "" && lineCount != 0 {
 			fmt.Printf("Error: Empty line at line %d\n", counter)
-		} 
-
+		}
 		if len(line) != letterWidth {
-			// Check for invalid line length
 			fmt.Printf("Error: Invalid line length at line %d\n", counter)
 			os.Exit(0)
 		}
@@ -144,7 +159,6 @@ func ProcessFile(file io.Reader) bool {
 		lineCount++
 		if lineCount == 8 {
 			lineCount = 0
-			wordNum++
 		}
 	}
 	if lineCount != 0 {
@@ -153,8 +167,6 @@ func ProcessFile(file io.Reader) bool {
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
-		os.Exit(1)
 	}
-
 	return true
 }
