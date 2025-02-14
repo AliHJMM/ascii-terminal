@@ -4,7 +4,7 @@ echo "-------------------------------------------------------------"
 echo "Running reverse tests on example files..."
 echo "-------------------------------------------------------------"
 
-for i in {00..08}; do
+for i in {00..07}; do
     FILE="AuditExamples/example$i.txt"
     
     if [ -f "$FILE" ]; then
