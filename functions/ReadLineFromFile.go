@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func ReadLineFromFile(lineIndex int, filename string) string {
@@ -18,11 +19,16 @@ func ReadLineFromFile(lineIndex int, filename string) string {
 	scanner := bufio.NewScanner(file)
 	currentLine := 0
 	for scanner.Scan() {
+		line := scanner.Text()
+		// Remove any trailing carriage returns
+		line = strings.TrimRight(line, "\r")
 		if currentLine == lineIndex {
-			result = scanner.Text()
+			result = line
 			break
 		}
 		currentLine++
 	}
+	
+	
 	return result
 }
