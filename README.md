@@ -108,3 +108,4 @@ ASCII-TERMINAL is a command-line tool that converts user-provided text into visu
 
 - [Ali Hasan](https://github.com/AliHJMM)
 - [Habib Mansoor](https://github.com/7abib04)
+- [Husain Ali](https://github.com/hujaafar)
